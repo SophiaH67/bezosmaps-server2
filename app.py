@@ -1,6 +1,7 @@
 from flask import Flask, request
 from vars import walkable_blocks
 from werkzeug.routing import IntegerConverter
+import json
 
 app = Flask(__name__)
 app.app_context().push()
@@ -18,12 +19,20 @@ app.url_map.converters['sint'] = SignedIntConverter
 def hello_world():
     return "<p>Hello, World!</p>"
 
+@app.get("/item")
+def get_item():
+    item_name = request.args.get('name')
+    results = Item.query.filter(Item.name.like(item_name) | Item.display_name.like(f'%{item_name}%')).all()
+    for result in results:
+        print(result.inventory)
+    return json.dumps([result.to_dict(rules=('-enchantments.item', '-inventory.items', '-inventory.block.inventory')) for result in results])
+
 @app.get("/block/<sint:x>/<sint:y>/<sint:z>")
 def walkable(x, y, z):
     block = db.session.query(Block).filter_by(x=x, y=y, z=z).first()
     if block is None:
         return "No block found", 404
-    return block.as_dict()
+    return block.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item'))
 
 @app.get("/path/<sint:cx>/<sint:cy>/<sint:cz>/<sint:tx>/<sint:ty>/<sint:tz>")
 def path(cx, cy, cz, tx, ty, tz):
@@ -88,4 +97,4 @@ def set_block(x, y, z):
     set_block_walkable(x, y, z, block.name in walkable_blocks)
     db.session.add(block_db)
     db.session.commit()
-    return block_db.as_dict()
+    return block_db.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item'))
