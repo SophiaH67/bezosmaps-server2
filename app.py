@@ -54,8 +54,7 @@ def set_block(x, y, z):
         print(block.inventory)
         # Overwrite inventory
         if block_db.inventory is not None:
-            block_db.inventory.delete()
-        inventory_db = Inventory(max_count=block.inventory["maxCount"])
+            db.session.delete(block_db.inventory)
         db.session.add(inventory_db)
 
         for item in block.inventory:
@@ -80,7 +79,7 @@ def set_block(x, y, z):
         pass
     elif block_db.inventory is not None:
         # Remove block_db.inventory
-        block_db.inventory.delete()
+        db.session.delete(block_db.inventory)
         pass
     
     block_db.name = block.name
