@@ -41,7 +41,7 @@ class block_dto():
     y: int
     z: int
     name: str
-    inventory: bool or None
+    inventory: dict or None
 
 @app.post("/block/<sint:x>/<sint:y>/<sint:z>")
 def set_block(x, y, z):
@@ -51,34 +51,34 @@ def set_block(x, y, z):
         block_db = Block(x=x, y=y, z=z, name=block.name)
 
     if block.inventory is not None:
+        print(block.inventory)
         # Overwrite inventory
         if block_db.inventory is not None:
             block_db.inventory.delete()
-        inventory_db = Inventory()
+        inventory_db = Inventory(max_count=block.inventory["maxCount"])
         db.session.add(inventory_db)
 
         for item in block.inventory:
             item_db = Item(
-                count=item.count,
-                max_count=item.max_count,
-                name=item.name,
-                display_name=item.display_name,
-                slot=item.slot,
-                damage=item.damage,
-                max_damage=item.max_damage,
+                count=item.get("count"),
+                max_count=item.get("maxCount"),
+                name=item.get("name"),
+                display_name=item.get("displayName"),
+                slot=item.get("slot"),
+                damage=item.get("damage", None),
+                max_damage=item.get("maxDamage", None),
                 inventory=inventory_db
             )
             db.session.add(item_db)
-            for enchantment in item.enchantments:
+            for enchantment in item.get("enchantments", []):
                 enchantment_db = Enchantment(
-                    name=enchantment.name,
-                    level=enchantment.level,
+                    name=enchantment.get("name"),
+                    level=enchantment.get("level"),
                     item=item_db
                 )
                 db.session.add(enchantment_db)
-            block_db.inventory.append(item_db)
         pass
-    elif block_db.inventory is not None and block.inventory is None:
+    elif block_db.inventory is not None:
         # Remove block_db.inventory
         block_db.inventory.delete()
         pass
