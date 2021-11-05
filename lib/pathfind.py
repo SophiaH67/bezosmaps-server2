@@ -31,9 +31,9 @@ class Node:
         path = []
         current = self
         while current is not None:
-            path.append(current)
+            path.append(f"{current.x},{current.y},{current.z}")
             current = current.parent
-        return path
+        return ';'.join(path)
     
     def calculate_h(self, goal):
         self.h = abs(self.x - goal.x) + abs(self.y - goal.y) + abs(self.z - goal.z)
@@ -41,8 +41,8 @@ class Node:
     A function that uses A* to find the shortest path between two points.
 """
 def pathfind(cx, cy, cz, tx, ty, tz):
-    start = Node(cx, cy, cz, None)
-    end = Node(tx, ty, tz, None)
+    start = Node(cx, cy, cz, 0, None)
+    end = Node(tx, ty, tz, 0, None)
     open_list = [start]
     closed_list = []
     while len(open_list) > 0:

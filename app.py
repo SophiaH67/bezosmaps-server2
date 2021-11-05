@@ -1,12 +1,12 @@
 from flask import Flask, request
 from vars import walkable_blocks
-import json
 
 app = Flask(__name__)
 app.app_context().push()
 
 from lib.block_walkable import set_block_walkable, get_block_walkable
 from lib.db import db, Block, Inventory, Item, Enchantment
+from lib.pathfind import pathfind
 
 @app.route("/")
 def hello_world():
@@ -15,12 +15,14 @@ def hello_world():
 @app.get("/block/<int:x>/<int:y>/<int:z>")
 def walkable(x, y, z):
     block = db.session.query(Block).filter_by(x=x, y=y, z=z).first()
-    blocks = db.session.query(Block).all()
-    for ablock in blocks:
-        print(ablock.x, ablock.y, ablock.z)
     if block is None:
         return "No block found", 404
     return block.as_dict()
+
+@app.get("/path/<int:cx>/<int:cy>/<int:cz>/<int:tx>/<int:ty>/<int:tz>")
+def path(cx, cy, cz, tx, ty, tz):
+    path = pathfind(cx, cy, cz, tx, ty, tz)
+    return { "path": path} if path else { "error": "No path found" }
 
 class block_dto():
     def __init__(self, data):
@@ -44,7 +46,6 @@ def set_block(x, y, z):
     block_db: Block = db.session.query(Block).where(Block.x == x, Block.y == y, Block.z == z).first()
     if block_db is None:
         block_db = Block(x=x, y=y, z=z, name=block.name)
-        print(f"ID of block is {block_db.id}")
 
     if block.inventory is not None:
         # Overwrite inventory
