@@ -51,13 +51,15 @@ def set_block(x, y, z):
         block_db = Block(x=x, y=y, z=z, name=block.name)
 
     if block.inventory is not None:
-        print(block.inventory)
         # Overwrite inventory
         if block_db.inventory is not None:
             db.session.delete(block_db.inventory)
+        inventory_db = Inventory(max_count=block.inventory["maxCount"], block=block_db)
         db.session.add(inventory_db)
 
-        for item in block.inventory:
+        for item in block.inventory["items"]:
+            if type(item) is not dict:
+                continue
             item_db = Item(
                 count=item.get("count"),
                 max_count=item.get("maxCount"),
