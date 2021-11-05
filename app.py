@@ -1,5 +1,6 @@
 from flask import Flask, request
 from vars import walkable_blocks
+from werkzeug.routing import IntegerConverter
 
 app = Flask(__name__)
 app.app_context().push()
@@ -8,18 +9,23 @@ from lib.block_walkable import set_block_walkable, get_block_walkable
 from lib.db import db, Block, Inventory, Item, Enchantment
 from lib.pathfind import pathfind
 
+class SignedIntConverter(IntegerConverter):
+    regex = r'-?\d+'
+
+app.url_map.converters['sint'] = SignedIntConverter
+
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.get("/block/<int:x>/<int:y>/<int:z>")
+@app.get("/block/<sint:x>/<sint:y>/<sint:z>")
 def walkable(x, y, z):
     block = db.session.query(Block).filter_by(x=x, y=y, z=z).first()
     if block is None:
         return "No block found", 404
     return block.as_dict()
 
-@app.get("/path/<int:cx>/<int:cy>/<int:cz>/<int:tx>/<int:ty>/<int:tz>")
+@app.get("/path/<sint:cx>/<sint:cy>/<sint:cz>/<sint:tx>/<sint:ty>/<sint:tz>")
 def path(cx, cy, cz, tx, ty, tz):
     path = pathfind(cx, cy, cz, tx, ty, tz)
     return { "path": path} if path else { "error": "No path found" }
@@ -37,11 +43,8 @@ class block_dto():
     name: str
     inventory: bool or None
 
-@app.post("/block/<int:x>/<int:y>/<int:z>")
+@app.post("/block/<sint:x>/<sint:y>/<sint:z>")
 def set_block(x, y, z):
-    x = int(x)
-    y = int(y)
-    z = int(z)
     block = block_dto(request.json)
     block_db: Block = db.session.query(Block).where(Block.x == x, Block.y == y, Block.z == z).first()
     if block_db is None:
