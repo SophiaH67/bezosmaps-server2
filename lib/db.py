@@ -22,7 +22,7 @@ class Inventory(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     max_count = db.Column(db.Integer)
     block_id = db.Column(db.Integer, db.ForeignKey('blocks.id'))
-    items = db.relationship('Item', backref='inventory')
+    items = db.relationship('Item', backref='inventory', cascade="all, delete-orphan")
 
 class Item(db.Model, SerializerMixin):
     __tablename__ = 'items'
@@ -35,7 +35,7 @@ class Item(db.Model, SerializerMixin):
     damage = db.Column(db.Integer, nullable=True)
     max_damage = db.Column(db.Integer, nullable=True)
     inventory_id = db.Column(db.Integer, db.ForeignKey('inventory.id'))
-    enchantments = db.relationship('Enchantment', backref='item')
+    enchantments = db.relationship('Enchantment', backref='item', cascade="all, delete-orphan")
 
 class Enchantment(db.Model):
     __tablename__ = 'enchantments'
