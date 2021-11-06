@@ -1,8 +1,9 @@
 from flask import current_app as app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
+from os import environ
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blocks.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
