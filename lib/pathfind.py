@@ -33,6 +33,7 @@ class Node:
         while current is not None:
             path.append(f"{current.x},{current.y},{current.z}")
             current = current.parent
+        path.reverse()
         return ';'.join(path)
     
     def calculate_h(self, goal):
