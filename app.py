@@ -98,3 +98,6 @@ def set_block(x, y, z):
     db.session.add(block_db)
     db.session.commit()
     return block_db.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item'))
+
+if __name__ == "__main__":
+    app.run()
