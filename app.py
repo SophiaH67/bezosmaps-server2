@@ -100,4 +100,4 @@ def set_block(x, y, z):
     return block_db.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item'))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
