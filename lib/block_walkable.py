@@ -1,9 +1,9 @@
 import redis
-
+from os import environ
 from lib.db import db, Block
 from vars import walkable_blocks
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host=environ['REDIS_HOST'], port=environ['REDIS_PORT'], db=0)
 
 def set_block_walkable(x, y, z, walkable=True):
     """
