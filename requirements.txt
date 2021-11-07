@@ -2,3 +2,4 @@ flask
 redis
 Flask-SQLAlchemy
 SQLAlchemy-serializer
+sqlalchemy
