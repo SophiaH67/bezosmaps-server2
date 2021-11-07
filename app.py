@@ -17,7 +17,7 @@ app.url_map.converters['sint'] = SignedIntConverter
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<p>Hello, Future Amazon Worker!</p>"
 
 @app.get("/item")
 def get_item():
