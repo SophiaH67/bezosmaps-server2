@@ -137,3 +137,4 @@ dmypy.json
 cython_debug/
 
 blocks.db
+db
