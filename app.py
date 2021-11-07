@@ -55,6 +55,10 @@ class block_dto():
 @app.post("/block/<sint:x>/<sint:y>/<sint:z>")
 def set_block(x, y, z):
     block = block_dto(request.json)
+    
+    print(f"Settings block {x} {y} {z} to be {'walkable' if block.name in walkable_blocks else 'not walkable'}")
+    set_block_walkable(x, y, z, block.name in walkable_blocks)
+
     block_db: Block = db.session.query(Block).where(Block.x == x, Block.y == y, Block.z == z).first()
     if block_db is None:
         block_db = Block(x=x, y=y, z=z, name=block.name)
@@ -94,7 +98,6 @@ def set_block(x, y, z):
         pass
     
     block_db.name = block.name
-    set_block_walkable(x, y, z, block.name in walkable_blocks)
     db.session.add(block_db)
     db.session.commit()
     return block_db.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item'))
