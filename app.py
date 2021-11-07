@@ -1,9 +1,11 @@
 from flask import Flask, request
+from flask_cors import CORS
 from vars import walkable_blocks
 from werkzeug.routing import IntegerConverter
 import json
 
 app = Flask(__name__)
+CORS(app)
 app.app_context().push()
 
 from lib.block_walkable import set_block_walkable, get_block_walkable

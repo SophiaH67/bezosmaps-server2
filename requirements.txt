@@ -4,3 +4,4 @@ Flask-SQLAlchemy
 SQLAlchemy-serializer
 sqlalchemy
 psycopg2
+flask_cors
