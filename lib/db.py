@@ -45,5 +45,4 @@ class Enchantment(db.Model):
     display_name = db.Column(db.String)
     level = db.Column(db.Integer)
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
-db.create_all()
 
