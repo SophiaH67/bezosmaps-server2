@@ -22,7 +22,7 @@ def hello_world():
 @app.get("/item")
 def get_item():
     item_name = request.args.get('name')
-    results = Item.query.filter(Item.name.like(item_name) | Item.display_name.like(f'%{item_name}%')).all()
+    results = Item.query.filter(Item.name.ilike(f'%{item_name}%') | Item.display_name.ilike(f'%{item_name}%')).all()
     for result in results:
         print(result.inventory)
     return json.dumps([result.to_dict(rules=('-enchantments.item', '-inventory.items', '-inventory.block.inventory')) for result in results])
