@@ -29,8 +29,12 @@ def get_item():
         print(result.inventory)
     return json.dumps([result.to_dict(rules=('-enchantments.item', '-inventory.items', '-inventory.block.inventory')) for result in results])
 
+@app.get("/block")
+def get_all_blocks():
+    return json.dumps([result.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item')) for result in Block.query.all()])
+
 @app.get("/block/<sint:x>/<sint:y>/<sint:z>")
-def walkable(x, y, z):
+def get_block(x, y, z):
     block = db.session.query(Block).filter_by(x=x, y=y, z=z).first()
     if block is None:
         return "No block found", 404
