@@ -31,7 +31,7 @@ def get_item():
 
 @app.get("/block")
 def get_all_blocks():
-    return json.dumps([result.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item')) for result in Block.query.all()])
+    return json.dumps([result.to_dict(rules=('-inventory.block', '-inventory.items.inventory', '-inventory.items.enchantments.item')) for result in Block.query.filter(Block.name != 'minecraft:air').all()])
 
 @app.get("/block/<sint:x>/<sint:y>/<sint:z>")
 def get_block(x, y, z):
