@@ -3,6 +3,7 @@ from flask_cors import CORS
 from vars import walkable_blocks
 from werkzeug.routing import IntegerConverter
 import json
+import sys
 
 app = Flask(__name__)
 CORS(app)
@@ -61,8 +62,7 @@ class block_dto():
 @app.post("/block/<sint:x>/<sint:y>/<sint:z>")
 def set_block(x, y, z):
     block = block_dto(request.json)
-    
-    print(f"Settings block {x} {y} {z} to be {'walkable' if block.name in walkable_blocks else 'not walkable'}")
+    sys.stdout.write(f"Settings block {x} {y} {z} to be {'walkable' if block.name in walkable_blocks else 'not walkable'}\n")
     set_block_walkable(x, y, z, block.name in walkable_blocks)
 
     block_db: Block = db.session.query(Block).where(Block.x == x, Block.y == y, Block.z == z).first()
